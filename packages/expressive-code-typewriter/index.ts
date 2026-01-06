@@ -546,6 +546,8 @@ const CLIENT_SCRIPT = `
 
       // Position cursor on current typing line
       if (currentTypingLine >= 0 && this.cursor) {
+        // Refresh container rect to handle scroll changes
+        this._containerRect = this.container.getBoundingClientRect();
         this.positionCursor(currentTypingLine, currentVisibleChars);
       }
 
@@ -581,15 +583,18 @@ const CLIENT_SCRIPT = `
       // This correctly handles wrapped text
       const position = this.getCharacterPosition(cache.codeEl, visibleChars);
 
+      // Add 1ch offset so cursor appears after the last typed character
+      const cursorOffset = cache.charWidth || 8;
+
       if (position) {
         this.cursor.style.top = (position.top - this._containerRect.top) + 'px';
-        this.cursor.style.left = (position.left - this._containerRect.left) + 'px';
+        this.cursor.style.left = (position.left - this._containerRect.left + cursorOffset) + 'px';
         this.cursor.style.transform = 'none';
       } else {
         // Fallback to simple calculation if Range API fails
         this.cursor.style.top = cache.top + 'px';
         this.cursor.style.left = cache.left + 'px';
-        this.cursor.style.transform = 'translateX(' + visibleChars + 'ch)';
+        this.cursor.style.transform = 'translateX(' + (visibleChars + 1) + 'ch)';
       }
     }
 
