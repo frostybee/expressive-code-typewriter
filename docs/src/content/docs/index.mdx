@@ -1,0 +1,42 @@
+---
+title: Expressive Code Typewriter
+description: An Expressive Code plugin that adds terminal typing animation to code blocks.
+head:
+  - tag: title
+    content: Expressive Code Typewriter
+  - tag: style
+    content: |
+      .hero-html {
+        --size: 12rem;
+        font-size: var(--size);
+        justify-content: center;
+        line-height: var(--size);
+      }
+template: splash
+editUrl: false
+hero:
+  tagline: An Expressive Code plugin that animates terminal code blocks with a realistic typing effect.
+  image:
+    file: ../../assets/expand.svg
+  actions:
+    - text: Get Started
+      link: /expressive-code-typewriter/getting-started/
+      icon: rocket
+    - text: Star on GitHub
+      link: https://github.com/frostybee/expressive-code-typewriter
+      icon: star
+      variant: secondary
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components'
+
+## Next steps
+
+<CardGrid stagger>
+  <Card title="Install the plugin" icon="puzzle">
+    Check the [getting started guide](/expressive-code-typewriter/getting-started/) for installation instructions.
+  </Card>
+  <Card title="Configure the plugin" icon="setting">
+    Customize the plugin behavior with [configuration options](/expressive-code-typewriter/configuration/).
+  </Card>
+</CardGrid>

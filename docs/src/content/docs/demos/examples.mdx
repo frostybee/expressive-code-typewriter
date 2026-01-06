@@ -1,0 +1,226 @@
+---
+title: Examples
+description: Test the terminal typing animation plugin
+---
+
+## Basic Typing Animation
+
+Add the `typed` meta option to enable terminal typing animation. Lines starting with `$` (the default prompt) will type character-by-character, while output lines appear instantly:
+
+```bash typed
+$ npm install my-package
+Installing dependencies...
+Done!
+$ npm run build
+Build complete!
+```
+
+## Custom Speed
+
+Control typing speed with the `speed` option (milliseconds per character). Default is 50ms:
+
+### Fast Typing (25ms per character)
+
+```bash typed speed="25"
+$ echo "Fast typing!"
+Fast typing!
+$ ls -la
+total 42
+drwxr-xr-x  10 user  staff   320 Dec 24 10:00 .
+drwxr-xr-x   5 user  staff   160 Dec 24 09:00 ..
+-rw-r--r--   1 user  staff  1024 Dec 24 10:00 package.json
+```
+
+### Slow Typing (100ms per character)
+
+```bash typed speed="100"
+$ echo "Slow and dramatic..."
+Slow and dramatic...
+```
+
+## Click to Start
+
+Use `trigger="click"` to require a click before the animation begins:
+
+```bash typed trigger="click"
+$ npm install react react-dom
+added 2 packages in 1.2s
+$ npm run dev
+Server running on http://localhost:3000
+```
+
+## Load Trigger
+
+Use `trigger="load"` to start animation immediately when the page loads:
+
+```bash typed trigger="load"
+$ whoami
+developer
+```
+
+## Custom Prompt
+
+Use different prompt characters with the `prompt` option:
+
+### Python REPL
+
+```python typed prompt=">>>"
+>>> print("Hello, World!")
+Hello, World!
+>>> 2 + 2
+4
+>>> import math
+>>> math.pi
+3.141592653589793
+```
+
+### PowerShell
+
+```powershell typed prompt="PS>"
+PS> Get-Process | Select-Object -First 3
+Handles  NPM(K)    PM(K)      WS(K)     CPU(s)     Id  SI ProcessName
+-------  ------    -----      -----     ------     --  -- -----------
+    150      10     5000      10000       0.50   1234   1 Code
+PS> Write-Host "PowerShell rocks!"
+PowerShell rocks!
+```
+
+### Root User
+
+```bash typed prompt="#"
+# apt update
+Hit:1 http://archive.ubuntu.com/ubuntu focal InRelease
+Get:2 http://security.ubuntu.com/ubuntu focal-security InRelease [114 kB]
+# apt install nginx
+Reading package lists... Done
+Building dependency tree
+```
+
+## Custom Delays
+
+Fine-tune animation timing:
+
+```bash typed delay="1000" lineDelay="500"
+$ echo "Starting in 1 second..."
+Starting in 1 second...
+$ echo "500ms between lines"
+500ms between lines
+```
+
+## Multiple Commands
+
+The animation handles multiple commands naturally:
+
+```bash typed
+$ cd my-project
+$ git init
+Initialized empty Git repository in /home/user/my-project/.git/
+$ git add .
+$ git commit -m "Initial commit"
+[main (root-commit) abc1234] Initial commit
+ 5 files changed, 100 insertions(+)
+$ git remote add origin git@github.com:user/my-project.git
+$ git push -u origin main
+Enumerating objects: 10, done.
+Counting objects: 100% (10/10), done.
+Writing objects: 100% (10/10), 2.50 KiB | 2.50 MiB/s, done.
+Total 10 (delta 0), reused 0 (delta 0)
+To github.com:user/my-project.git
+ * [new branch]      main -> main
+Branch 'main' set up to track remote branch 'main' from 'origin'.
+```
+
+## Non-Typed Code Block
+
+Code blocks without the `typed` option behave normally:
+
+```javascript
+function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+console.log(greet("World"));
+```
+
+## Terminal Frame with Typing
+
+Works with terminal frame titles:
+
+```bash typed title="Install Dependencies"
+$ npm install express mongoose dotenv
+added 57 packages in 3.2s
+$ npm install -D nodemon typescript @types/node
+added 42 packages in 2.1s
+$ npx tsc --init
+Created a new tsconfig.json
+```
+
+## Output Delay
+
+Add a pause before output appears to simulate command execution time:
+
+```bash typed outputDelay="800"
+$ npm run build
+Compiling TypeScript...
+Build completed successfully!
+$ npm test
+Running tests...
+All 42 tests passed!
+```
+
+## Typing Variance
+
+Add natural randomness to typing speed for a more realistic feel. A variance of 0.3 means ±30% speed variation. The effect includes occasional "thinking pauses" that simulate natural hesitation:
+
+```bash typed variance="0.4"
+$ git commit -m "feat: implement user authentication with JWT tokens and refresh token rotation"
+[main a1b2c3d] feat: implement user authentication with JWT tokens and refresh token rotation
+ 8 files changed, 342 insertions(+), 12 deletions(-)
+$ npm run test -- --coverage --watchAll=false --testPathPattern="auth"
+PASS src/auth/auth.service.spec.ts
+PASS src/auth/jwt.strategy.spec.ts
+Test Suites: 2 passed, 2 total
+Tests:       12 passed, 12 total
+Coverage:    94.2%
+```
+
+## Loop Mode
+
+Enable continuous replay with the `loop` option:
+
+```bash typed loop loopDelay="1500"
+$ date
+Wed Dec 25 12:00:00 UTC 2024
+$ uptime
+12:00:00 up 42 days, 3:14
+```
+
+## Step-Through Mode
+
+Pause after each line and wait for user interaction. Click on the code block or press Space/Enter/Arrow keys to advance:
+
+```bash typed stepMode trigger="click"
+$ Step 1: Clone the repository
+Cloning into 'my-project'...
+$ Step 2: Install dependencies
+Installing packages...
+$ Step 3: Start the server
+Server running on port 3000
+```
+
+## Combined Features
+
+Combine multiple options for the ultimate experience:
+
+```bash typed variance="0.3" outputDelay="500" speed="40"
+$ docker compose up -d
+Creating network "app_default"...
+Creating app_db_1    ... done
+Creating app_redis_1 ... done
+Creating app_web_1   ... done
+$ docker compose ps
+NAME        STATUS    PORTS
+app_db_1    running   5432/tcp
+app_redis_1 running   6379/tcp
+app_web_1   running   0.0.0.0:3000->3000/tcp
+```

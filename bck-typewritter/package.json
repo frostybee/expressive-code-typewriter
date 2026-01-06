@@ -1,0 +1,41 @@
+{
+  "name": "expressive-code-typewriter-monorepo",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "An Expressive Code plugin to expand or collapse code blocks.",
+  "author": "frostybee",
+  "type": "module",
+  "engines": {
+    "node": "^18.17.1 || ^20.3.0 || >=21.0.0"
+  },
+  "packageManager": "pnpm@10.26.0",
+  "private": true,
+  "sideEffects": false,
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "6.0.0",
+    "eslint": "^9.39.2",
+    "prettier": "^3.7.4",
+    "prettier-plugin-astro": "^0.14.1",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.29.8"
+  },
+  "scripts": {
+    "build": "pnpm -F expressive-code-typewriter build",
+    "test": "pnpm -F expressive-code-typewriter test",
+    "build:docs": "pnpm -F expressive-code-typewriter-docs build",
+    "start:docs": "pnpm -F expressive-code-typewriter-docs start",    
+    "test:watch": "pnpm -F expressive-code-typewriter test:watch",
+    "ci-version": "changeset version && pnpm install --no-frozen-lockfile",
+    "ci-publish": "pnpm build && changeset publish"
+  },
+  "homepage": "https://github.com/frostybee/expressive-code-typewriter",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frostybee/expressive-code-typewriter.git"
+  },
+  "bugs": "https://github.com/frostybee/expressive-code-typewriter/issues"
+}

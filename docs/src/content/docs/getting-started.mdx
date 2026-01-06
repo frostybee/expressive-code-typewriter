@@ -1,0 +1,131 @@
+---
+title: Getting Started
+description: How to install and use the Expressive Code Typewriter plugin in your website.
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+import { PackageManagers } from 'starlight-package-managers';
+
+The Typewriter plugin enhances [Expressive Code](https://expressive-code.com/) blocks on your website by adding terminal typing animations to code blocks. Commands appear character-by-character with a blinking cursor, while output appears instantly.
+
+This guide will show you how to add it to your website.
+
+## Set-up
+
+<Steps>
+
+1. Install the `expressive-code-typewriter` dependency using your preferred package manager:
+
+   <PackageManagers pkg="expressive-code-typewriter" />
+
+2. Add the plugin to your site's Expressive Code configuration:
+
+   <Tabs>
+   <TabItem label="Astro">
+   ```js
+   // astro.config.mjs
+   import { defineConfig } from 'astro/config';
+   import astroExpressiveCode from 'astro-expressive-code';
+   import { pluginTypewriter } from 'expressive-code-typewriter';
+
+   export default defineConfig({
+     integrations: [
+       astroExpressiveCode({
+         plugins: [pluginTypewriter()],
+       }),
+     ],
+   });
+   ```
+   </TabItem>
+
+   <TabItem label="Starlight">
+   ```js
+   // astro.config.mjs
+   import { defineConfig } from 'astro/config';
+   import starlight from '@astrojs/starlight';
+   import { pluginTypewriter } from 'expressive-code-typewriter';
+
+   export default defineConfig({
+     integrations: [
+       starlight({
+         title: 'My Starlight site',
+         expressiveCode: {
+           plugins: [pluginTypewriter()],
+         },
+       }),
+     ],
+   });
+   ```
+   </TabItem>
+
+   <TabItem label="Next.js">
+   ```js
+   // next.config.mjs
+   import createMDX from '@next/mdx';
+   import rehypeExpressiveCode from 'rehype-expressive-code';
+   import { pluginTypewriter } from 'expressive-code-typewriter';
+
+   /** @type {import('rehype-expressive-code').RehypeExpressiveCodeOptions} */
+   const rehypeExpressiveCodeOptions = {
+     plugins: [pluginTypewriter()],
+   };
+
+   /** @type {import('next').NextConfig} */
+   const nextConfig = {
+     reactStrictMode: true,
+     pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
+   };
+
+   const withMDX = createMDX({
+     extension: /\.mdx?$/,
+     options: {
+       remarkPlugins: [],
+       rehypePlugins: [
+         // The nested array structure is required to pass options
+         // to a rehype plugin
+         [rehypeExpressiveCode, rehypeExpressiveCodeOptions],
+       ],
+     },
+   });
+
+   export default withMDX(nextConfig);
+   ```
+   </TabItem>
+
+   <TabItem label="EC config file">
+   ```js
+   // ec.config.mjs
+   import { pluginTypewriter } from 'expressive-code-typewriter';
+
+   export default {
+     plugins: [pluginTypewriter()],
+   };
+   ```
+   </TabItem>
+   </Tabs>
+
+3. That's it! Now add the `typed` meta option to any code block to enable the typing animation.
+
+</Steps>
+
+## Basic Usage
+
+Add `typed` to your code block's meta string to enable the typing effect:
+
+````md
+```bash typed
+$ npm install my-package
+Installing dependencies...
+Done!
+```
+````
+
+Lines starting with `$` (the default prompt) type character-by-character, while other lines appear instantly.
+
+## Usage
+
+For more information on how to configure the plugin, see the [Configuration](/expressive-code-typewriter/configuration) page.
+
+## Support
+
+This plugin is open-source software licensed under the MIT license. If you run into any bugs, please [report issues on GitHub](https://github.com/frostybee/expressive-code-typewriter/issues).

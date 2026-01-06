@@ -1,0 +1,263 @@
+---
+title: Configuration
+---
+
+The plugin can be configured with global options and per-block overrides using meta strings.
+
+## Global Options
+
+Pass an options object to `pluginTypewriter()` in your Expressive Code config:
+
+```js
+// astro.config.mjs
+import starlight from '@astrojs/starlight'
+import { defineConfig } from 'astro/config'
+import { pluginTypewriter } from 'expressive-code-typewriter'
+
+export default defineConfig({
+  integrations: [
+    starlight({
+      expressiveCode: {
+        plugins: [
+          pluginTypewriter({
+            speed: 50,
+            prompt: '$',
+            trigger: 'visible',
+            startDelay: 500,
+            lineDelay: 300,
+            showReplayButton: true,
+            replayButtonText: 'Replay',
+            cursorChar: '█',
+            outputDelay: 0,
+            loop: false,
+            loopDelay: 1000,
+            typingVariance: 0,
+            stepMode: false,
+          }),
+        ],
+      },
+      title: 'My Docs',
+    }),
+  ],
+})
+```
+
+### `speed`
+
+**Type:** `number`
+**Default:** `50`
+
+Milliseconds per character for the typing animation. Lower values = faster typing.
+
+### `prompt`
+
+**Type:** `string`
+**Default:** `"$"`
+
+Character(s) that identify command/input lines. Lines starting with this prompt (after trimming whitespace) will type character-by-character. All other lines appear instantly.
+
+Common prompts:
+- `$` - Unix shell (default)
+- `#` - Root user
+- `>` - Windows CMD
+- `>>>` - Python REPL
+- `PS>` - PowerShell
+
+### `trigger`
+
+**Type:** `'visible' | 'click' | 'load'`
+**Default:** `"visible"`
+
+When to start the typing animation:
+- `visible` - Start when the code block scrolls into view (uses IntersectionObserver)
+- `click` - Require user to click a play button overlay
+- `load` - Start immediately when the page loads
+
+### `startDelay`
+
+**Type:** `number`
+**Default:** `500`
+
+Initial delay in milliseconds before the animation starts (after trigger fires).
+
+### `lineDelay`
+
+**Type:** `number`
+**Default:** `300`
+
+Delay in milliseconds between lines during the animation.
+
+### `showReplayButton`
+
+**Type:** `boolean`
+**Default:** `true`
+
+Whether to show a replay button after the animation completes, allowing users to re-run the animation.
+
+### `replayButtonText`
+
+**Type:** `string`
+**Default:** `"Replay"`
+
+Text for the replay button.
+
+### `cursorChar`
+
+**Type:** `string`
+**Default:** `"█"`
+
+Character to use for the blinking cursor during typing.
+
+### `outputDelay`
+
+**Type:** `number`
+**Default:** `0`
+
+Delay in milliseconds before output lines appear. This simulates command execution time, adding a pause after an input line finishes typing before the output is revealed.
+
+### `loop`
+
+**Type:** `boolean`
+**Default:** `false`
+
+Enable continuous replay. When enabled, the animation automatically restarts after completing. The replay button is hidden in loop mode.
+
+### `loopDelay`
+
+**Type:** `number`
+**Default:** `1000`
+
+Delay in milliseconds before the animation restarts when `loop` is enabled.
+
+### `typingVariance`
+
+**Type:** `number`
+**Default:** `0`
+
+Random speed variance per character, making the typing feel more natural. Value should be between 0 and 1, where 0.3 means ±30% variance from the base speed. For example, with `speed: 50` and `typingVariance: 0.3`, each character will take between 35ms and 65ms.
+
+### `stepMode`
+
+**Type:** `boolean`
+**Default:** `false`
+
+Enable step-through mode. When enabled, the animation pauses after each line completes, waiting for user interaction to continue. Users can advance by clicking on the code block or pressing Space, Enter, or Arrow keys.
+
+## Per-Block Options
+
+You can override the global settings for individual code blocks using meta string options.
+
+### Enable Typing Animation
+
+Add `typed` to enable the typing effect:
+
+````md
+```bash typed
+$ npm install my-package
+Done!
+```
+````
+
+### Override Speed
+
+````md
+```bash typed speed="25"
+$ echo "Fast typing!"
+```
+````
+
+### Override Prompt
+
+````md
+```python typed prompt=">>>"
+>>> print("Hello!")
+Hello!
+```
+````
+
+### Override Trigger
+
+````md
+```bash typed trigger="click"
+$ npm start
+```
+````
+
+### Override Delays
+
+````md
+```bash typed delay="1000" lineDelay="500"
+$ echo "Custom timing"
+```
+````
+
+### Output Delay
+
+Add a pause before output appears to simulate command execution:
+
+````md
+```bash typed outputDelay="500"
+$ npm install
+Installing dependencies...
+Done!
+```
+````
+
+### Loop Mode
+
+Enable continuous replay:
+
+````md
+```bash typed loop loopDelay="2000"
+$ echo "This will repeat"
+Hello!
+```
+````
+
+### Typing Variance
+
+Add natural randomness to typing speed:
+
+````md
+```bash typed variance="0.3"
+$ echo "More realistic typing"
+```
+````
+
+### Step-Through Mode
+
+Pause after each line for user-controlled progression:
+
+````md
+```bash typed stepMode
+$ Step 1: Install dependencies
+Installing...
+$ Step 2: Build the project
+Building...
+```
+````
+
+### Combined Options
+
+You can combine multiple options:
+
+````md
+```bash typed variance="0.3" outputDelay="300" loop
+$ npm run build
+Compiling...
+Done!
+```
+````
+
+## Accessibility
+
+The plugin respects the user's `prefers-reduced-motion` preference. When reduced motion is enabled:
+
+- All text is immediately visible (no animation)
+- The cursor is hidden
+- The click overlay is removed
+- The replay button is hidden
+
+Screen readers have full access to the text content at all times since the text is always present in the DOM (we use CSS `clip-path` to reveal text progressively, not JavaScript text insertion).
+
+See live examples on the [Examples](/expressive-code-typewriter/demos/examples/) page.
