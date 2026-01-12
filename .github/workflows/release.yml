@@ -3,7 +3,7 @@ permissions: {}
 
 on:
   push:
-    branches: [main-disabled]
+    branches: [main]
 
 jobs:
   release:
