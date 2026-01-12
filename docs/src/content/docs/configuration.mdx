@@ -2,7 +2,7 @@
 title: Configuration
 ---
 
-The plugin can be configured with global options and per-block overrides using meta strings.
+Configure the plugin with global default options. To override settings for individual code blocks, see the [Per-Block Options](/expressive-code-typewriter/usage/) page.
 
 ## Global Options
 
@@ -27,6 +27,7 @@ export default defineConfig({
             lineDelay: 300,
             showReplayButton: true,
             replayButtonText: 'Replay',
+            showSkipButton: false,
             cursorChar: '█',
             outputDelay: 0,
             loop: false,
@@ -101,6 +102,17 @@ Whether to show a replay button after the animation completes, allowing users to
 
 Text for the replay button.
 
+### `showSkipButton`
+
+**Type:** `boolean`
+**Default:** `false`
+
+Whether to show a skip button during the animation, allowing users to immediately complete the animation and see all content. The skip button appears at the bottom-right corner of the code block while typing is in progress.
+
+:::tip[When to enable]
+Enable skip for longer code blocks or when users may want to quickly see the final result without waiting for the full animation.
+:::
+
 ### `cursorChar`
 
 **Type:** `string`
@@ -141,113 +153,7 @@ Random speed variance per character, making the typing feel more natural. Value 
 **Type:** `boolean`
 **Default:** `false`
 
-Enable step-through mode. When enabled, the animation pauses after each line completes, waiting for user interaction to continue. Users can advance by clicking on the code block or pressing Space, Enter, or Arrow keys.
-
-## Per-Block Options
-
-You can override the global settings for individual code blocks using meta string options.
-
-### Enable Typing Animation
-
-Add `typed` to enable the typing effect:
-
-````md
-```bash typed
-$ npm install my-package
-Done!
-```
-````
-
-### Override Speed
-
-````md
-```bash typed speed="25"
-$ echo "Fast typing!"
-```
-````
-
-### Override Prompt
-
-````md
-```python typed prompt=">>>"
->>> print("Hello!")
-Hello!
-```
-````
-
-### Override Trigger
-
-````md
-```bash typed trigger="click"
-$ npm start
-```
-````
-
-### Override Delays
-
-````md
-```bash typed delay="1000" lineDelay="500"
-$ echo "Custom timing"
-```
-````
-
-### Output Delay
-
-Add a pause before output appears to simulate command execution:
-
-````md
-```bash typed outputDelay="500"
-$ npm install
-Installing dependencies...
-Done!
-```
-````
-
-### Loop Mode
-
-Enable continuous replay:
-
-````md
-```bash typed loop loopDelay="2000"
-$ echo "This will repeat"
-Hello!
-```
-````
-
-### Typing Variance
-
-Add natural randomness to typing speed:
-
-````md
-```bash typed variance="0.3"
-$ echo "More realistic typing"
-```
-````
-
-### Step-Through Mode
-
-Pause after each line for user-controlled progression:
-
-````md
-```bash typed stepMode
-$ Step 1: Install dependencies
-Installing...
-$ Step 2: Build the project
-Building...
-```
-````
-
-### Combined Options
-
-You can combine multiple options:
-
-````md
-```bash typed variance="0.3" outputDelay="300" loop
-$ npm run build
-Compiling...
-Done!
-```
-````
+Enable step-through mode. When enabled, the animation pauses after each line completes, waiting for user interaction to continue. A "Click to continue" hint appears when paused. Users can advance by clicking on the code block or pressing Space, Enter, or Arrow keys.
 
 ## Accessibility
 
@@ -256,8 +162,21 @@ The plugin respects the user's `prefers-reduced-motion` preference. When reduced
 - All text is immediately visible (no animation)
 - The cursor is hidden
 - The click overlay is removed
-- The replay button is hidden
+- The replay and skip buttons are hidden
 
 Screen readers have full access to the text content at all times since the text is always present in the DOM (we use CSS `clip-path` to reveal text progressively, not JavaScript text insertion).
 
-See live examples on the [Examples](/expressive-code-typewriter/demos/examples/) page.
+## Browser Compatibility
+
+The plugin uses modern browser APIs and is supported in all current browsers:
+
+| Browser | Minimum Version |
+|---------|-----------------|
+| Chrome | 51+ |
+| Firefox | 55+ |
+| Safari | 12.1+ |
+| Edge | 79+ |
+
+**Not supported:** Internet Explorer (requires `IntersectionObserver` and CSS `clip-path`).
+
+See the [Per-Block Options](/expressive-code-typewriter/usage/) page for meta string overrides, or view live demos on the [Examples](/expressive-code-typewriter/demos/examples/) page.

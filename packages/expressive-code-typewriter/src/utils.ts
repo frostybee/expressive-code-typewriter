@@ -11,6 +11,7 @@ export const DEFAULT_OPTIONS: Required<PluginTypewriterOptions> = {
   lineDelay: 300,
   showReplayButton: true,
   replayButtonText: 'Replay',
+  showSkipButton: false,
   cursorChar: '\u2588', // Full block character █
   outputDelay: 0,
   loop: false,
@@ -57,6 +58,7 @@ export function resolveOptions(
       typeof options.replayButtonText === 'string' && options.replayButtonText.trim()
         ? options.replayButtonText
         : DEFAULT_OPTIONS.replayButtonText,
+    showSkipButton: options.showSkipButton ?? DEFAULT_OPTIONS.showSkipButton,
     cursorChar:
       typeof options.cursorChar === 'string' && options.cursorChar.length > 0
         ? options.cursorChar
@@ -83,9 +85,10 @@ export function resolveOptions(
 /**
  * Parses code block content into structured line data.
  * Lines starting with the prompt (after trimming leading whitespace) are considered input lines.
+ * Handles both Unix (LF) and Windows (CRLF) line endings.
  */
 export function parseLines(code: string, prompt: string): ParsedLine[] {
-  const lines = code.split('\n')
+  const lines = code.split(/\r?\n/)
   return lines.map((content, index) => {
     const trimmedContent = content.trimStart()
     const isInput = trimmedContent.startsWith(prompt)
@@ -164,6 +167,9 @@ export function resolveBlockOptions(
   // Parse stepMode override
   const stepMode = metaOptions.getBoolean('stepMode') ?? globalConfig.stepMode
 
+  // Parse showSkipButton override (meta key: skip)
+  const showSkipButton = metaOptions.getBoolean('skip') ?? globalConfig.showSkipButton
+
   return {
     typed: true,
     speed,
@@ -176,6 +182,7 @@ export function resolveBlockOptions(
     loopDelay,
     typingVariance,
     stepMode,
+    showSkipButton,
   }
 }
 

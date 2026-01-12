@@ -2,16 +2,17 @@
   "name": "expressive-code-typewriter",
   "version": "0.1.0",
   "license": "MIT",
-  "description": "An Expressive Code plugin to expand or collapse code blocks.",
+  "description": "Add typewriter-style typing animations to your code blocks.",
   "author": "frostybee",
   "keywords": [
     "astro",
     "withastro",
     "starlight",
-    "collapsible",
+    "typewriter",
+    "typing-animation",
     "codeblock",
     "expressive-code",
-    "collapsible-code-blocks"
+    "terminal"
   ],
   "type": "module",
   "main": "./dist/index.js",

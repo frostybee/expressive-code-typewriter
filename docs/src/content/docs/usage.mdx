@@ -1,0 +1,169 @@
+---
+title: Per-Block Options
+---
+
+Override global settings for individual code blocks using meta string options. These options are added directly to the code block's opening fence.
+
+## Basic Usage
+
+Add `typed` to any code block's meta string to enable the typing animation:
+
+````md
+```bash typed
+$ npm install my-package
+Done!
+```
+````
+
+Lines starting with the prompt character (`$` by default) will type character-by-character. All other lines (output) appear instantly.
+
+## Per-Block Overrides
+
+Override any global setting for a specific code block by adding options to the meta string.
+
+### `speed`
+
+Override the typing speed (milliseconds per character):
+
+````md
+```bash typed speed="25"
+$ echo "Fast typing!"
+```
+````
+
+### `prompt`
+
+Change the prompt character for this block:
+
+````md
+```python typed prompt=">>>"
+>>> print("Hello!")
+Hello!
+```
+````
+
+### `trigger`
+
+Control when the animation starts:
+
+````md
+```bash typed trigger="click"
+$ npm start
+```
+````
+
+Options: `visible` (default), `click`, `load`
+
+### `delay` / `lineDelay`
+
+Override the start delay and line delay:
+
+````md
+```bash typed delay="1000" lineDelay="500"
+$ echo "Custom timing"
+```
+````
+
+### `outputDelay`
+
+Add a pause before output appears to simulate command execution:
+
+````md
+```bash typed outputDelay="500"
+$ npm install
+Installing dependencies...
+Done!
+```
+````
+
+### `loop` / `loopDelay`
+
+Enable continuous replay:
+
+````md
+```bash typed loop loopDelay="2000"
+$ echo "This will repeat"
+Hello!
+```
+````
+
+### `variance`
+
+Add natural randomness to typing speed (0-1 range):
+
+````md
+```bash typed variance="0.3"
+$ echo "More realistic typing"
+```
+````
+
+### `stepMode`
+
+Pause after each line for user-controlled progression. A "Click to continue" hint appears when paused:
+
+````md
+```bash typed stepMode
+$ Step 1: Install dependencies
+Installing...
+$ Step 2: Build the project
+Building...
+```
+````
+
+**Advancing to the next step:**
+
+| Method | Action |
+|--------|--------|
+| Mouse | Click anywhere on the code block |
+| Keyboard | Press `Space`, `Enter`, `→` (Arrow Right), or `↓` (Arrow Down) |
+
+:::tip
+Focus the code block first (click on it or tab to it) to use keyboard controls.
+:::
+
+### `skip`
+
+Show a skip button during the animation, allowing users to immediately complete it:
+
+````md
+```bash typed skip
+$ npm install
+Installing packages...
+$ npm run build
+Building project...
+Done!
+```
+````
+
+The skip button appears at the bottom-right corner while the animation is running.
+
+## Combining Options
+
+You can combine multiple options:
+
+````md
+```bash typed variance="0.3" outputDelay="300" loop
+$ npm run build
+Compiling...
+Done!
+```
+````
+
+## Quick Reference
+
+| Option | Type | Example | Description |
+|--------|------|---------|-------------|
+| `typed` | flag | `typed` | Enable typing animation |
+| `speed` | number | `speed="25"` | Ms per character |
+| `prompt` | string | `prompt=">>>"` | Prompt character(s) |
+| `trigger` | string | `trigger="click"` | When to start |
+| `delay` | number | `delay="1000"` | Initial delay |
+| `lineDelay` | number | `lineDelay="500"` | Delay between lines |
+| `outputDelay` | number | `outputDelay="300"` | Delay before output |
+| `loop` | flag | `loop` | Enable looping |
+| `loopDelay` | number | `loopDelay="2000"` | Delay before loop restart |
+| `variance` | number | `variance="0.3"` | Typing speed variance |
+| `stepMode` | flag | `stepMode` | Pause after each line |
+| `skip` | flag | `skip` | Show skip button |
+
+See live demos on the [Examples](/expressive-code-typewriter/demos/examples/) page, or set global defaults on the [Configuration](/expressive-code-typewriter/configuration/) page.

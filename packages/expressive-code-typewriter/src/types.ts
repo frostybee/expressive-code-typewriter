@@ -21,6 +21,8 @@ export interface PluginTypewriterOptions {
   showReplayButton?: boolean
   /** Text for replay button. Default: `"Replay"` */
   replayButtonText?: string
+  /** Whether to show skip button during animation. Default: `false` */
+  showSkipButton?: boolean
   /** Cursor character. Default: `"█"` */
   cursorChar?: string
   /** Delay before output lines appear (ms). Default: `0` */
@@ -64,4 +66,5 @@ export interface ResolvedBlockOptions {
   loopDelay: number
   typingVariance: number
   stepMode: boolean
+  showSkipButton: boolean
 }

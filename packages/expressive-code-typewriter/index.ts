@@ -7,11 +7,18 @@ export type { PluginTypewriterOptions } from "./src/types";
 
 /**
  * CSS styles for the terminal typing effect
- */
+ */ 
 const BASE_STYLES = `
   /* Container for typed code block */
   .ec-typed {
     position: relative;
+    isolation: isolate;
+  }
+
+  /* Hide copy button during animation to prevent click conflicts with skip button */
+  .ec-typed--animating .copy {
+    pointer-events: none;
+    opacity: 0.3;
   }
 
   /* Each line wrapper */
@@ -68,7 +75,7 @@ const BASE_STYLES = `
     justify-content: center;
     background: rgba(0, 0, 0, 0.4);
     cursor: pointer;
-    z-index: 10;
+    z-index: 50;
     transition: opacity 0.2s ease;
     border-radius: inherit;
   }
@@ -88,7 +95,7 @@ const BASE_STYLES = `
   /* Replay button */
   .ec-typed-replay {
     position: absolute;
-    top: 8px;
+    top: 4px;
     right: 8px;
     display: flex;
     align-items: center;
@@ -102,7 +109,7 @@ const BASE_STYLES = `
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.2s ease, background-color 0.2s ease;
-    z-index: 5;
+    z-index: 100;
   }
 
   .ec-typed--complete .ec-typed-replay {
@@ -166,6 +173,88 @@ const BASE_STYLES = `
     display: none;
   }
 
+  /* Skip button - visible during animation */
+  .ec-typed-skip {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+    z-index: 100;
+  }
+
+  .ec-typed--animating .ec-typed-skip {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .ec-typed-skip:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .ec-typed-skip:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .ec-typed-skip-icon {
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+  }
+
+  /* Light theme adjustments for skip button */
+  :root[data-theme="light"] .ec-typed-skip,
+  html.light .ec-typed-skip,
+  [data-color-scheme="light"] .ec-typed-skip {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+
+  :root[data-theme="light"] .ec-typed-skip:hover,
+  html.light .ec-typed-skip:hover,
+  [data-color-scheme="light"] .ec-typed-skip:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  /* Hide skip button when animation complete or in loop mode */
+  .ec-typed--complete .ec-typed-skip,
+  .ec-typed[data-loop="true"] .ec-typed-skip {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Reduced motion: hide skip button */
+  @media (prefers-reduced-motion: reduce) {
+    .ec-typed-skip {
+      display: none !important;
+    }
+  }
+
+  /* Visually hidden but accessible to screen readers */
+  .ec-typed-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   /* Step mode styles */
   .ec-typed[data-step-mode="true"] {
     cursor: pointer;
@@ -182,6 +271,71 @@ const BASE_STYLES = `
 
   .ec-typed--paused {
     cursor: pointer;
+  }
+
+  /* Step hint - positioned at top of code block */
+  .ec-typed-step-hint {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 70%, transparent 100%);
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    border-radius: inherit;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .ec-typed--paused .ec-typed-step-hint {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .ec-typed-step-hint-content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    color: white;
+    font-size: 0.75rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .ec-typed-step-hint-icon {
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+  }
+
+  /* Light theme adjustments for step hint */
+  :root[data-theme="light"] .ec-typed-step-hint,
+  html.light .ec-typed-step-hint,
+  [data-color-scheme="light"] .ec-typed-step-hint {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.1) 70%, transparent 100%);
+  }
+
+  :root[data-theme="light"] .ec-typed-step-hint-content,
+  html.light .ec-typed-step-hint-content,
+  [data-color-scheme="light"] .ec-typed-step-hint-content {
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  /* Reduced motion: hide step hint */
+  @media (prefers-reduced-motion: reduce) {
+    .ec-typed-step-hint {
+      display: none !important;
+    }
   }
 `;
 
@@ -229,6 +383,8 @@ const CLIENT_SCRIPT = `
       this.cursor = container.querySelector('.ec-typed-cursor');
       this.overlay = container.querySelector('.ec-typed-overlay');
       this.replayBtn = container.querySelector('.ec-typed-replay');
+      this.skipBtn = container.querySelector('.ec-typed-skip');
+      this.statusEl = container.querySelector('.ec-typed-status');
 
       this.isAnimating = false;
       this.isComplete = false;
@@ -236,6 +392,7 @@ const CLIENT_SCRIPT = `
       this.startTime = null;
       this.timings = [];
       this.loopTimeout = null;
+      this.startTimeout = null;
 
       // Step mode state
       this.isPaused = false;
@@ -285,10 +442,27 @@ const CLIENT_SCRIPT = `
         this.replayBtn.addEventListener('click', () => this.replay());
       }
 
+      // Set up skip button
+      if (this.skipBtn) {
+        this.skipBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.skip();
+        });
+      }
+
       // Set up step mode
       if (this.stepMode) {
         this.setupStepMode();
       }
+
+      // Set up Escape key to skip animation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && (this.isAnimating || this.isPaused)) {
+          e.preventDefault();
+          this.skip();
+        }
+      });
     }
 
     setupClickTrigger() {
@@ -328,6 +502,7 @@ const CLIENT_SCRIPT = `
       this.isAnimating = true;
       this.isComplete = false;
       this.container.classList.remove('ec-typed--complete');
+      this.container.classList.add('ec-typed--animating');
 
       // Calculate timings for each line
       this.timings = this.calculateTimings();
@@ -347,8 +522,16 @@ const CLIENT_SCRIPT = `
         }
       }
 
+      // Announce to screen readers and set busy state during delay
+      if (this.statusEl) {
+        this.statusEl.textContent = 'Animation started';
+      }
+      this.container.setAttribute('aria-busy', 'true');
+
       // Start animation after initial delay
-      setTimeout(() => {
+      this.startTimeout = setTimeout(() => {
+        this.startTimeout = null;
+        this.container.removeAttribute('aria-busy');
         this.startTime = performance.now();
         this.animate();
       }, this.startDelay);
@@ -472,6 +655,9 @@ const CLIENT_SCRIPT = `
     }
 
     animate() {
+      // Don't run if animation was skipped or completed
+      if (!this.isAnimating) return;
+
       // Handle step mode pause
       if (this.isPaused) return;
 
@@ -583,8 +769,10 @@ const CLIENT_SCRIPT = `
       // This correctly handles wrapped text
       const position = this.getCharacterPosition(cache.codeEl, visibleChars);
 
-      // Add 1ch offset so cursor appears after the last typed character
-      const cursorOffset = cache.charWidth || 8;
+      // Only add offset when line is complete (cursor at rest after last character)
+      const lineData = this.linesData[lineIndex];
+      const isLineComplete = lineData && visibleChars >= lineData.charCount;
+      const cursorOffset = isLineComplete ? (cache.charWidth || 8) : 0;
 
       if (position) {
         this.cursor.style.top = (position.top - this._containerRect.top) + 'px';
@@ -594,7 +782,8 @@ const CLIENT_SCRIPT = `
         // Fallback to simple calculation if Range API fails
         this.cursor.style.top = cache.top + 'px';
         this.cursor.style.left = cache.left + 'px';
-        this.cursor.style.transform = 'translateX(' + (visibleChars + 1) + 'ch)';
+        const fallbackOffset = isLineComplete ? 1 : 0;
+        this.cursor.style.transform = 'translateX(' + (visibleChars + fallbackOffset) + 'ch)';
       }
     }
 
@@ -653,12 +842,18 @@ const CLIENT_SCRIPT = `
     complete() {
       this.isAnimating = false;
       this.isComplete = true;
+      this.container.classList.remove('ec-typed--animating');
       this.container.classList.add('ec-typed--complete');
 
       // Stop cursor blinking and hide
       if (this.cursor) {
         this.cursor.classList.remove('ec-typed-cursor--typing');
         this.cursor.classList.add('ec-typed-cursor--hidden');
+      }
+
+      // Announce to screen readers
+      if (this.statusEl) {
+        this.statusEl.textContent = 'Animation complete';
       }
 
       if (this.animationFrame) {
@@ -695,6 +890,11 @@ const CLIENT_SCRIPT = `
         this.cursor.classList.remove('ec-typed-cursor--hidden');
         this.cursor.classList.remove('ec-typed-cursor--typing');
       }
+
+      // Clear screen reader announcement
+      if (this.statusEl) {
+        this.statusEl.textContent = '';
+      }
     }
 
     replay() {
@@ -704,6 +904,12 @@ const CLIENT_SCRIPT = `
       if (this.loopTimeout) {
         clearTimeout(this.loopTimeout);
         this.loopTimeout = null;
+      }
+
+      // Cancel any pending start timeout
+      if (this.startTimeout) {
+        clearTimeout(this.startTimeout);
+        this.startTimeout = null;
       }
 
       // Cancel any pending animation
@@ -719,6 +925,54 @@ const CLIENT_SCRIPT = `
 
       this.resetAnimation();
       this.start();
+    }
+
+    skip() {
+      // Only skip if animation is running or paused (step mode)
+      if (!this.isAnimating && !this.isPaused) return;
+
+      // Cancel any pending start timeout
+      if (this.startTimeout) {
+        clearTimeout(this.startTimeout);
+        this.startTimeout = null;
+      }
+
+      // Cancel any pending animation frame
+      if (this.animationFrame) {
+        cancelAnimationFrame(this.animationFrame);
+        this.animationFrame = null;
+      }
+
+      // Reset step mode state if paused
+      if (this.isPaused) {
+        this.isPaused = false;
+        this.container.classList.remove('ec-typed--paused');
+      }
+
+      // Show all lines as complete
+      this.lineElements.forEach((el, index) => {
+        el.classList.add('ec-typed-line--complete');
+        const charCount = this.linesData[index]?.charCount ?? 0;
+        el.style.setProperty('--ec-typed-chars', charCount.toString());
+      });
+
+      // Mark all timings as completed
+      if (this.timings) {
+        this.timings.forEach(timing => {
+          timing.completed = true;
+        });
+      }
+
+      // Remove aria-busy if set
+      this.container.removeAttribute('aria-busy');
+
+      // Announce skip to screen readers
+      if (this.statusEl) {
+        this.statusEl.textContent = 'Animation skipped';
+      }
+
+      // Complete the animation
+      this.complete();
     }
 
     setupStepMode() {
@@ -750,6 +1004,11 @@ const CLIENT_SCRIPT = `
       if (this.cursor) {
         this.cursor.classList.remove('ec-typed-cursor--typing');
       }
+
+      // Announce pause to screen readers
+      if (this.statusEl) {
+        this.statusEl.textContent = 'Animation paused. Press Enter, Space, or Arrow keys to continue.';
+      }
     }
 
     continueStep() {
@@ -761,6 +1020,11 @@ const CLIENT_SCRIPT = `
       // Show cursor as typing again
       if (this.cursor) {
         this.cursor.classList.add('ec-typed-cursor--typing');
+      }
+
+      // Announce continuation to screen readers
+      if (this.statusEl) {
+        this.statusEl.textContent = 'Animation resumed';
       }
 
       // Adjust start time to account for pause
@@ -918,6 +1182,46 @@ function createReplayIcon() {
 }
 
 /**
+ * Create SVG step hint icon (chevron right / arrow)
+ */
+function createStepHintIcon() {
+  return h(
+    "svg",
+    {
+      class: "ec-typed-step-hint-icon",
+      viewBox: "0 0 24 24",
+      xmlns: "http://www.w3.org/2000/svg",
+      "aria-hidden": "true",
+    },
+    [
+      h("path", {
+        d: "M8 5v14l11-7z",
+      }),
+    ]
+  );
+}
+
+/**
+ * Create SVG skip icon (fast forward)
+ */
+function createSkipIcon() {
+  return h(
+    "svg",
+    {
+      class: "ec-typed-skip-icon",
+      viewBox: "0 0 24 24",
+      xmlns: "http://www.w3.org/2000/svg",
+      "aria-hidden": "true",
+    },
+    [
+      h("path", {
+        d: "M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z",
+      }),
+    ]
+  );
+}
+
+/**
  * Typewriter Plugin
  *
  * Animates terminal/shell code blocks to simulate real-time typing.
@@ -1038,6 +1342,51 @@ export function pluginTypewriter(options: PluginTypewriterOptions = {}) {
             )
           : null;
 
+        // Create skip button (visible during animation, if enabled)
+        const skipIcon = createSkipIcon();
+        const skipButton = blockOptions.showSkipButton
+          ? h(
+              "button",
+              {
+                class: "ec-typed-skip",
+                type: "button",
+                "aria-label": "Skip animation",
+              },
+              [skipIcon, "Skip"]
+            )
+          : null;
+
+        // Create status element for screen reader announcements
+        const statusElement = h(
+          "div",
+          {
+            class: "ec-typed-status",
+            "aria-live": "polite",
+            "aria-atomic": "true",
+          },
+          []
+        );
+
+        // Create step hint overlay (for stepMode)
+        const stepHintIcon = createStepHintIcon();
+        const stepHint = blockOptions.stepMode
+          ? h(
+              "div",
+              {
+                class: "ec-typed-step-hint",
+                role: "button",
+                "aria-label": "Press Enter, Space, Arrow keys, or click to continue",
+              },
+              [
+                h(
+                  "div",
+                  { class: "ec-typed-step-hint-content" },
+                  [stepHintIcon, "Click or press Enter to continue"]
+                ),
+              ]
+            )
+          : null;
+
         // Prepare lines data for JS (minimal info needed for animation)
         const linesData = lines.map((l) => ({
           isInput: l.isInput,
@@ -1064,7 +1413,7 @@ export function pluginTypewriter(options: PluginTypewriterOptions = {}) {
             role: "region",
             "aria-label": "Animated terminal code block",
           },
-          [figureElement, overlay, cursor, ...(replayButton ? [replayButton] : [])]
+          [figureElement, overlay, cursor, ...(skipButton ? [skipButton] : []), statusElement, ...(replayButton ? [replayButton] : []), ...(stepHint ? [stepHint] : [])]
         );
 
         // Replace in AST
