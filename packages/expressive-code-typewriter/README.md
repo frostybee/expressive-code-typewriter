@@ -1,10 +1,9 @@
-<div align="center">
-  <h1>Expressive Code Typewriter</h1>
-  <p>Add typewriter-style typing animations to your code blocks.</p>
+# Expressive Code Typewriter
 
-  [![npm version](https://badge.fury.io/js/expressive-code-typewriter.svg)](https://badge.fury.io/js/expressive-code-typewriter)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-</div>
+Add typewriter-style typing animations to your code blocks.
+
+[![npm version](https://badge.fury.io/js/expressive-code-typewriter.svg)](https://www.npmjs.com/package/expressive-code-typewriter)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
 
@@ -50,13 +49,14 @@ Done!
 
 Customize individual code blocks with meta string options:
 
-```md
+````md
 ```bash typed speed="30" variance="0.3" outputDelay="500"
 $ npm run build
 Compiling...
 Done!
 ```
-```
+````
+
 
 Available options: `speed`, `prompt`, `trigger`, `delay`, `lineDelay`, `outputDelay`, `loop`, `loopDelay`, `variance`, `stepMode`
 
