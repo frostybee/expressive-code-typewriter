@@ -2,4 +2,4 @@
 "expressive-code-typewriter": patch
 ---
 
-Fixing CI release
+Initial public release
